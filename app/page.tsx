@@ -1,8 +1,25 @@
-import { dummyLinks, profileData } from "@/data/links";
+"use client";
+
+import { useState } from "react";
+import { dummyLinks, profileData, LinkType } from "@/data/links";
 import { Card } from "@/components/ui/card";
 import { IconUser, IconArrowUpRight } from "@tabler/icons-react";
+import { AddLinkDialog } from "@/components/AddLinkDialog";
 
 export default function Page() {
+  const [links, setLinks] = useState<LinkType[]>(dummyLinks);
+
+  const handleAddLink = (title: string, url: string) => {
+    const newLink: LinkType = {
+      id: Math.random().toString(36).substring(2, 9),
+      title,
+      url,
+      createdAt: new Date().toISOString(),
+    };
+    
+    // 새 링크를 가장 위에 추가 (최신순 정렬에 맞게)
+    setLinks([newLink, ...links]);
+  };
   return (
     <main className="flex min-h-screen flex-col items-center p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50 via-white to-zinc-50 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-x-hidden">
       <div className="flex w-full max-w-lg flex-col gap-10 mt-12 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -24,7 +41,12 @@ export default function Page() {
 
         {/* Links Section */}
         <section className="flex flex-col gap-3.5 w-full px-2">
-          {dummyLinks.map((link) => {
+          {/* Add Link Dialog */}
+          <div className="mb-2">
+            <AddLinkDialog onAddLink={handleAddLink} />
+          </div>
+
+          {links.map((link) => {
             return (
               <a
                 key={link.id}
