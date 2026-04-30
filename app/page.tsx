@@ -1,24 +1,16 @@
 "use client"
 
-import { useState } from "react"
-import { dummyLinks, profileData, LinkType } from "@/data/links"
+import { useLinks } from "@/hooks/useLinks"
+import { profileData } from "@/data/links"
 import { Card } from "@/components/ui/card"
 import { IconUser, IconArrowUpRight } from "@tabler/icons-react"
 import { AddLinkDialog } from "@/components/AddLinkDialog"
 
 export default function Page() {
-  const [links, setLinks] = useState<LinkType[]>(dummyLinks)
+  const { links, loading, addLink } = useLinks()
 
-  const handleAddLink = (title: string, url: string) => {
-    const newLink: LinkType = {
-      id: Math.random().toString(36).substring(2, 9),
-      title,
-      url,
-      createdAt: new Date().toISOString(),
-    }
-
-    // 새 링크를 가장 위에 추가 (최신순 정렬에 맞게)
-    setLinks([newLink, ...links])
+  const handleAddLink = async (title: string, url: string) => {
+    await addLink(title, url)
   }
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50 via-white to-zinc-50 p-6 text-zinc-900 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-950 dark:text-zinc-100">
@@ -45,7 +37,14 @@ export default function Page() {
             <AddLinkDialog onAddLink={handleAddLink} />
           </div>
 
-          {links.map((link) => {
+          {loading ? (
+            <div className="flex flex-col gap-3.5">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="h-[76px] animate-pulse border-zinc-200/60 bg-white/50 dark:border-zinc-800/60 dark:bg-zinc-900/30" />
+              ))}
+            </div>
+          ) : (
+            links.map((link) => {
             return (
               <a
                 key={link.id}
@@ -77,7 +76,13 @@ export default function Page() {
                 </Card>
               </a>
             )
-          })}
+          })
+          )}
+          {links.length === 0 && !loading && (
+            <div className="py-20 text-center text-zinc-400">
+              아직 등록된 링크가 없습니다.
+            </div>
+          )}
         </section>
       </div>
     </main>
