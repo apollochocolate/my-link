@@ -16,10 +16,10 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { IconPlus } from "@tabler/icons-react"
+import { IconPlus, IconLoader2 } from "@tabler/icons-react"
 
 interface AddLinkDialogProps {
-  onAddLink: (title: string, url: string) => void
+  onAddLink: (title: string, url: string) => Promise<void>
 }
 
 const formSchema = z.object({
@@ -57,6 +57,7 @@ type FormValues = z.infer<typeof formSchema>
 
 export function AddLinkDialog({ onAddLink }: AddLinkDialogProps) {
   const [open, setOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const {
     register,
@@ -79,10 +80,17 @@ export function AddLinkDialog({ onAddLink }: AddLinkDialogProps) {
     }
   }
 
-  const onSubmit = (data: FormValues) => {
-    onAddLink(data.title, data.url)
-    reset()
-    setOpen(false)
+  const onSubmit = async (data: FormValues) => {
+    try {
+      setIsSubmitting(true)
+      await onAddLink(data.title, data.url)
+      reset()
+      setOpen(false)
+    } catch (error) {
+      console.error("Failed to add link:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -149,10 +157,14 @@ export function AddLinkDialog({ onAddLink }: AddLinkDialogProps) {
             </Button>
             <Button
               type="submit"
-              disabled={!isValid}
-              className="h-11 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:pointer-events-none disabled:opacity-50"
+              disabled={!isValid || isSubmitting}
+              className="h-11 min-w-[100px] rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:pointer-events-none disabled:opacity-50"
             >
-              추가하기
+              {isSubmitting ? (
+                <IconLoader2 size={18} className="animate-spin" />
+              ) : (
+                "추가하기"
+              )}
             </Button>
           </DialogFooter>
         </form>

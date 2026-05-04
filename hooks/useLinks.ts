@@ -6,6 +6,9 @@ import {
   collection,
   addDoc,
   getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
   query,
   orderBy,
   serverTimestamp,
@@ -33,6 +36,9 @@ export function useLinks() {
           createdAt: data.createdAt?.toDate 
             ? data.createdAt.toDate().toISOString() 
             : data.createdAt || new Date().toISOString(),
+          updatedAt: data.updatedAt?.toDate
+            ? data.updatedAt.toDate().toISOString()
+            : data.updatedAt || undefined,
         } as LinkType
       })
       
@@ -55,6 +61,9 @@ export function useLinks() {
       // URL 자동 완성 (https://)
       const formattedUrl = url.startsWith("http") ? url : `https://${url}`
 
+      // 로딩 상태를 보여주기 위한 인위적 지연
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
       await addDoc(linksRef, {
         title,
         url: formattedUrl,
@@ -69,5 +78,37 @@ export function useLinks() {
     }
   }
 
-  return { links, loading, addLink }
+  const updateLink = async (id: string, title: string, url: string) => {
+    try {
+      const linkRef = doc(db, "users", "anonymous", "links", id)
+      const formattedUrl = url.startsWith("http") ? url : `https://${url}`
+
+      // 로딩 상태를 보여주기 위한 인위적 지연
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      await updateDoc(linkRef, {
+        title,
+        url: formattedUrl,
+        updatedAt: serverTimestamp(),
+      })
+
+      await fetchLinks()
+    } catch (error) {
+      console.error("Error updating link:", error)
+      throw error
+    }
+  }
+
+  const deleteLink = async (id: string) => {
+    try {
+      const linkRef = doc(db, "users", "anonymous", "links", id)
+      await deleteDoc(linkRef)
+      await fetchLinks()
+    } catch (error) {
+      console.error("Error deleting link:", error)
+      throw error
+    }
+  }
+
+  return { links, loading, addLink, updateLink, deleteLink }
 }

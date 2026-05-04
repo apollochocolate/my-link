@@ -2,7 +2,8 @@ export interface LinkType {
   id: string
   title: string
   url: string
-  createdAt: string // PRD 기준 Timestamp, 더미 데이터에서는 문자열 사용
+  createdAt: string
+  updatedAt?: string // 수정 시각
 }
 
 export const profileData = {

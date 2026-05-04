@@ -5,12 +5,21 @@ import { profileData } from "@/data/links"
 import { Card } from "@/components/ui/card"
 import { IconUser, IconArrowUpRight } from "@tabler/icons-react"
 import { AddLinkDialog } from "@/components/AddLinkDialog"
+import { LinkItem } from "@/components/LinkItem"
 
 export default function Page() {
-  const { links, loading, addLink } = useLinks()
+  const { links, loading, addLink, updateLink, deleteLink } = useLinks()
 
   const handleAddLink = async (title: string, url: string) => {
     await addLink(title, url)
+  }
+
+  const handleUpdateLink = async (id: string, title: string, url: string) => {
+    await updateLink(id, title, url)
+  }
+
+  const handleDeleteLink = async (id: string) => {
+    await deleteLink(id)
   }
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50 via-white to-zinc-50 p-6 text-zinc-900 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-950 dark:text-zinc-100">
@@ -44,39 +53,14 @@ export default function Page() {
               ))}
             </div>
           ) : (
-            links.map((link) => {
-            return (
-              <a
+            links.map((link) => (
+              <LinkItem
                 key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group w-full rounded-xl transition-all outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-              >
-                <Card className="relative flex flex-row items-center gap-4 overflow-hidden border-zinc-200/60 bg-white/70 !p-4 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-500/5 dark:border-zinc-800/60 dark:bg-zinc-900/50 dark:hover:shadow-indigo-500/10">
-                  {/* Subtle hover background gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/0 to-indigo-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:to-indigo-500/10" />
-
-                  <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-zinc-100 p-1.5 ring-1 ring-zinc-200 dark:bg-zinc-800 dark:ring-zinc-700">
-                    <img
-                      src={`https://s2.googleusercontent.com/s2/favicons?domain=${link.url}&sz=64`}
-                      alt={link.title}
-                      className="h-6 w-6 rounded-sm bg-transparent"
-                      width={24}
-                      height={24}
-                    />
-                  </div>
-                  <span className="relative z-10 flex-1 font-semibold text-zinc-700 transition-colors group-hover:text-indigo-600 dark:text-zinc-200 dark:group-hover:text-indigo-400">
-                    {link.title}
-                  </span>
-                  <IconArrowUpRight
-                    className="relative z-10 h-5 w-5 text-zinc-400 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
-                    stroke={1.5}
-                  />
-                </Card>
-              </a>
-            )
-          })
+                link={link}
+                onUpdate={handleUpdateLink}
+                onDelete={handleDeleteLink}
+              />
+            ))
           )}
           {links.length === 0 && !loading && (
             <div className="py-20 text-center text-zinc-400">
