@@ -19,10 +19,14 @@ import {
   IconExternalLink,
   IconCopy,
   IconChevronDown,
+  IconChartBar,
 } from "@tabler/icons-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export function Header() {
   const { user, loading, loginWithGoogle, logout } = useAuth()
+  const router = useRouter()
 
   const handleCopyLink = async () => {
     if (!user) return
@@ -49,9 +53,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b border-border/40 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6">
-      <span className="text-lg font-bold tracking-tight text-primary">
-        MyLink
-      </span>
+      <Link href="/" className="transition-opacity hover:opacity-80">
+        <span className="text-lg font-bold tracking-tight text-primary">
+          MyLink
+        </span>
+      </Link>
 
       {user ? (
         <DropdownMenu>
@@ -87,6 +93,13 @@ export function Header() {
             <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer gap-2">
               <IconCopy size={16} className="text-muted-foreground" />
               내 페이지 링크 복사
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => router.push("/stats")} 
+              className="cursor-pointer gap-2"
+            >
+              <IconChartBar size={16} className="text-muted-foreground" />
+              내 링크 통계
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="cursor-pointer gap-2 text-destructive focus:bg-destructive/10 focus:text-destructive">

@@ -45,6 +45,7 @@ export function useLinks(userId: string | null) {
           updatedAt: data.updatedAt?.toDate
             ? data.updatedAt.toDate().toISOString()
             : data.updatedAt || undefined,
+          clickCount: data.clickCount || 0,
         } as LinkType
       })
       
