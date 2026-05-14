@@ -45,10 +45,12 @@ async function getUserProfileAndLinks(username: string) {
       updatedAt: data.updatedAt?.toDate
         ? data.updatedAt.toDate().toISOString()
         : data.updatedAt || undefined,
+      clickCount: data.clickCount || 0,
     } as LinkType
   })
 
   return {
+    userId,
     profile: {
       displayName: profileData.displayName || username,
       bio: profileData.bio || "",
@@ -87,6 +89,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     <main className="min-h-[calc(100vh-56px)] bg-background">
       <div className="mx-auto max-w-md h-full min-h-screen border-x border-border/40 shadow-sm bg-card">
         <PublicProfile 
+          userId={data.userId}
           displayName={data.profile.displayName}
           bio={data.profile.bio}
           links={data.links}

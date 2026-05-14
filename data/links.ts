@@ -4,6 +4,7 @@ export interface LinkType {
   url: string
   createdAt: string
   updatedAt?: string // 수정 시각
+  clickCount?: number // 클릭 수
 }
 
 export const profileData = {

@@ -1,16 +1,26 @@
+"use client"
+
 import { LinkType } from "@/data/links"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { IconArrowUpRight, IconUser } from "@tabler/icons-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { trackLinkClick } from "@/app/actions/track"
 
 interface PublicProfileProps {
+  userId: string
   displayName: string
   bio?: string
   links: LinkType[]
 }
 
-export function PublicProfile({ displayName, bio = "나만의 링크들을 한 곳에 모았습니다.", links }: PublicProfileProps) {
+export function PublicProfile({ userId, displayName, bio = "나만의 링크들을 한 곳에 모았습니다.", links }: PublicProfileProps) {
+  const handleLinkClick = (linkId: string) => {
+    trackLinkClick(userId, linkId).catch((error) => {
+      console.error("[PublicProfile] Error tracking click:", error)
+    })
+  }
+
   return (
     <div className="flex h-full w-full flex-col bg-background text-foreground">
       <ScrollArea className="flex-1">
@@ -47,6 +57,7 @@ export function PublicProfile({ displayName, bio = "나만의 링크들을 한 �
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => handleLinkClick(link.id)}
                     className="group block w-full rounded-xl transition-all outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <Card className="relative flex flex-row items-center gap-4 overflow-hidden border-border bg-card p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-accent/50">

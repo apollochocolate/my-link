@@ -184,6 +184,7 @@ export default function Page() {
               
               <div className="h-full w-full overflow-y-auto overflow-x-hidden scrollbar-hide">
                 <PublicProfile 
+                  userId={user.uid}
                   displayName={user.displayName} 
                   bio={user.bio}
                   links={links} 
