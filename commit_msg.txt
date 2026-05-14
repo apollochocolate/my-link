@@ -1,0 +1,9 @@
+feat: 구글 로그인 연동, 프로필 수정 및 동적 라우팅 페이지 구현
+
+- Firebase Auth 및 Firestore 연동 (useAuth, useLinks 훅 수정)
+- 로그인 여부에 따른 랜딩페이지 / 관리페이지 뷰 분기 (app/page.tsx)
+- 헤더 컴포넌트 추가 및 소셜 로그인/로그아웃 기능 적용 (components/Header.tsx)
+- 유저 개인 프로필(username, displayName, bio) 설정 기능 구현 (components/ProfileForm.tsx)
+- username 기반으로 Firestore 유저 정보를 찾는 동적 라우팅 페이지 추가 (app/[username]/page.tsx)
+- 서버 컴포넌트 환경(Next.js) Firestore GRPC 에러 대응을 위해 firebase/firestore/lite 모듈 사용
+- 동적 SEO 최적화 메타데이터 렌더링 구현 (generateMetadata)

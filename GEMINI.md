@@ -22,6 +22,9 @@
 ## 🎨 UI/UX Design Principles (Based on Wireframe)
 1. **Extreme Simplicity**: No profile image uploads. Use a default icon (`[👤]`) and text (display name, bio) only.
 2. **Link Sorting**: Newest links appear at the **top** (Reverse Chronological).
+1-1. **UI/UX**: shadecm/ui 컴포넌트를 적극 활용, 모바일 반응형을 고려
+  - **Design Preset**: 항상 다음 명령어로 초기화된 커스텀 테마를 기준(preset b0)으로 작업합니다.
+    `npx shadcn@latest init --preset b0 --base base --template next`
 3. **Admin View Layout**:
     - **Desktop**: 2-column layout (Settings on left, Live Mobile Preview on right).
     - **Mobile**: Hide preview; show settings in full width.

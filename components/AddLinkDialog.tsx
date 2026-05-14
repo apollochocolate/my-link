@@ -97,17 +97,17 @@ export function AddLinkDialog({ onAddLink }: AddLinkDialogProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
-          <Button className="group h-12 w-full gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-0.5 hover:from-indigo-600 hover:to-violet-600 hover:shadow-indigo-500/40 active:translate-y-0">
+          <Button className="group h-12 w-full gap-2 rounded-xl text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-sm">
             <IconPlus
               size={20}
               stroke={2.5}
               className="transition-transform duration-300 group-hover:rotate-90"
             />
-            <span className="text-[15px] font-semibold">새로운 링크 추가</span>
+            <span>새로운 링크 추가</span>
           </Button>
         }
       />
-      <DialogContent className="rounded-2xl sm:max-w-[425px] dark:border-zinc-800">
+      <DialogContent className="rounded-2xl sm:max-w-[425px]">
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle className="text-xl">새 링크 추가</DialogTitle>
@@ -122,10 +122,10 @@ export function AddLinkDialog({ onAddLink }: AddLinkDialogProps) {
                 id="title"
                 {...register("title")}
                 placeholder="예: 내 포트폴리오"
-                className={`h-11 dark:border-zinc-700 ${errors.title ? "border-red-500 focus-visible:ring-red-500 dark:border-red-500" : ""}`}
+                className={`h-11 ${errors.title ? "border-destructive focus-visible:ring-destructive" : ""}`}
               />
               {errors.title && (
-                <p className="line-clamp-1 text-sm font-medium text-red-500 dark:text-red-400">
+                <p className="line-clamp-1 text-sm font-medium text-destructive">
                   {errors.title.message}
                 </p>
               )}
@@ -137,10 +137,10 @@ export function AddLinkDialog({ onAddLink }: AddLinkDialogProps) {
                 type="text"
                 {...register("url")}
                 placeholder="예: google.com (https 자동 추가)"
-                className={`h-11 dark:border-zinc-700 ${errors.url ? "border-red-500 focus-visible:ring-red-500 dark:border-red-500" : ""}`}
+                className={`h-11 ${errors.url ? "border-destructive focus-visible:ring-destructive" : ""}`}
               />
               {errors.url && (
-                <p className="line-clamp-1 text-sm font-medium text-red-500 dark:text-red-400">
+                <p className="line-clamp-1 text-sm font-medium text-destructive">
                   {errors.url.message}
                 </p>
               )}
@@ -158,7 +158,7 @@ export function AddLinkDialog({ onAddLink }: AddLinkDialogProps) {
             <Button
               type="submit"
               disabled={!isValid || isSubmitting}
-              className="h-11 min-w-[100px] rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:pointer-events-none disabled:opacity-50"
+              className="h-11 min-w-[100px] rounded-lg disabled:pointer-events-none disabled:opacity-50"
             >
               {isSubmitting ? (
                 <IconLoader2 size={18} className="animate-spin" />

@@ -15,15 +15,21 @@ import {
 } from "firebase/firestore"
 import { LinkType } from "@/data/links"
 
-export function useLinks() {
+export function useLinks(userId: string | null) {
   const [links, setLinks] = useState<LinkType[]>([])
   const [loading, setLoading] = useState(true)
 
   // 링크 목록을 불러오는 함수
   const fetchLinks = useCallback(async () => {
+    if (!userId) {
+      setLinks([])
+      setLoading(false)
+      return
+    }
+
     try {
       setLoading(true)
-      const linksRef = collection(db, "users", "anonymous", "links")
+      const linksRef = collection(db, "users", userId, "links")
       const q = query(linksRef, orderBy("createdAt", "desc"))
       
       const querySnapshot = await getDocs(q)
@@ -48,15 +54,16 @@ export function useLinks() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     fetchLinks()
   }, [fetchLinks])
 
   const addLink = async (title: string, url: string) => {
+    if (!userId) throw new Error("User not logged in")
     try {
-      const linksRef = collection(db, "users", "anonymous", "links")
+      const linksRef = collection(db, "users", userId, "links")
       
       // URL 자동 완성 (https://)
       const formattedUrl = url.startsWith("http") ? url : `https://${url}`
@@ -79,8 +86,9 @@ export function useLinks() {
   }
 
   const updateLink = async (id: string, title: string, url: string) => {
+    if (!userId) throw new Error("User not logged in")
     try {
-      const linkRef = doc(db, "users", "anonymous", "links", id)
+      const linkRef = doc(db, "users", userId, "links", id)
       const formattedUrl = url.startsWith("http") ? url : `https://${url}`
 
       // 로딩 상태를 보여주기 위한 인위적 지연
@@ -100,8 +108,9 @@ export function useLinks() {
   }
 
   const deleteLink = async (id: string) => {
+    if (!userId) throw new Error("User not logged in")
     try {
-      const linkRef = doc(db, "users", "anonymous", "links", id)
+      const linkRef = doc(db, "users", userId, "links", id)
       await deleteDoc(linkRef)
       await fetchLinks()
     } catch (error) {
