@@ -16,6 +16,7 @@ import { AddLinkDialog } from "@/components/AddLinkDialog"
 import { LinkItem } from "@/components/LinkItem"
 import { PublicProfile } from "@/components/PublicProfile"
 import { ProfileForm } from "@/components/ProfileForm"
+import { LandingPage } from "@/components/LandingPage/LandingPage"
 
 export default function Page() {
   const { user, loading: authLoading, loginWithGoogle } = useAuth()
@@ -47,76 +48,7 @@ export default function Page() {
 
   // 비로그인 상태 - 랜딩 페이지
   if (!user) {
-    return (
-      <main className="flex min-h-[calc(100vh-56px)] flex-col items-center overflow-x-hidden bg-background p-6 text-foreground">
-        <div className="mt-16 mb-20 flex w-full max-w-2xl animate-in flex-col items-center gap-16 duration-700 fade-in slide-in-from-bottom-4">
-          {/* Hero Section */}
-          <section className="flex flex-col items-center gap-6 text-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
-              <IconLink className="h-10 w-10" stroke={1.5} />
-            </div>
-            <div className="space-y-3">
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-                나만의 링크 페이지를
-                <br />
-                <span className="text-primary">
-                  한 곳에서 관리하세요
-                </span>
-              </h1>
-              <p className="mx-auto max-w-md text-lg text-muted-foreground">
-                포트폴리오, SNS, 블로그 등 모든 링크를 하나의 페이지로 모아
-                간편하게 공유할 수 있습니다.
-              </p>
-            </div>
-            <Button
-              onClick={loginWithGoogle}
-              size="lg"
-              className="mt-2 gap-2.5 rounded-xl font-semibold shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
-            >
-              <IconBrandGoogle size={20} />
-              Google로 시작하기
-            </Button>
-          </section>
-
-          {/* Features Section */}
-          <section className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
-            <Card className="flex flex-col items-center gap-3 bg-card p-6 text-center shadow-sm">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                <IconRocket size={24} className="text-primary" />
-              </div>
-              <h3 className="font-semibold text-card-foreground">
-                간편한 설정
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Google 로그인 한 번이면 바로 시작할 수 있습니다.
-              </p>
-            </Card>
-            <Card className="flex flex-col items-center gap-3 bg-card p-6 text-center shadow-sm">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                <IconDeviceDesktop size={24} className="text-primary" />
-              </div>
-              <h3 className="font-semibold text-card-foreground">
-                반응형 디자인
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                어떤 기기에서도 아름답게 보이는 페이지를 제공합니다.
-              </p>
-            </Card>
-            <Card className="flex flex-col items-center gap-3 bg-card p-6 text-center shadow-sm">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                <IconPalette size={24} className="text-primary" />
-              </div>
-              <h3 className="font-semibold text-card-foreground">
-                깔끔한 UI
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                심플하고 직관적인 인터페이스로 링크를 관리하세요.
-              </p>
-            </Card>
-          </section>
-        </div>
-      </main>
-    )
+    return <LandingPage onLogin={loginWithGoogle} />
   }
 
   // 로그인 상태 - 마이 페이지 (Admin View)
