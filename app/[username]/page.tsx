@@ -73,6 +73,21 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
   return {
     title: `${data.profile.displayName}님의 링크 | MyLink`,
     description: data.profile.bio || `${data.profile.displayName}님의 모든 링크를 한 곳에서 확인하세요.`,
+    openGraph: {
+      title: `${data.profile.displayName}님의 링크 | MyLink`,
+      description: data.profile.bio || `${data.profile.displayName}님의 모든 링크를 한 곳에서 확인하세요.`,
+      url: `https://my-link-xi-blond.vercel.app/${resolvedParams.username}`,
+      siteName: "마이링크",
+      type: "profile",
+      images: [
+        {
+          url: `/${resolvedParams.username}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `${data.profile.displayName}님의 링크 오픈 그래프 이미지`,
+        }
+      ]
+    }
   }
 }
 
