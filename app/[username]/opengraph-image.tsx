@@ -1,4 +1,6 @@
 import { ImageResponse } from 'next/og';
+import { app } from "@/lib/firebase";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore/lite";
 
 export const runtime = 'edge';
 export const size = {
@@ -7,8 +9,31 @@ export const size = {
 };
 export const contentType = 'image/png';
 
+const db = getFirestore(app);
+
+async function getUserProfile(username: string) {
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("username", "==", username));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return null;
+    }
+
+    const profileData = querySnapshot.docs[0].data();
+    return {
+      displayName: profileData.displayName || username,
+      bio: profileData.bio || "",
+    };
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
 async function loadGoogleFont(font: string, text: string) {
-  const url = `https://fonts.googleapis.com/css2?family=${font}:wght@700;900&text=${encodeURIComponent(text)}`;
+  const url = `https://fonts.googleapis.com/css2?family=${font}:wght@700&text=${encodeURIComponent(text)}`;
   const css = await (
     await fetch(url, {
       headers: {
@@ -23,10 +48,17 @@ async function loadGoogleFont(font: string, text: string) {
   return res.arrayBuffer();
 }
 
-export default async function Image({ params }: { params: { username: string } }) {
-  const username = params.username;
+export default async function Image({ params }: { params: Promise<{ username: string }> }) {
+  const resolvedParams = await params;
+  const username = resolvedParams.username;
+  
+  const profile = await getUserProfile(username);
+  const displayName = profile?.displayName || username;
+  const bio = profile?.bio || "";
+
   // 폰트에 포함할 텍스트 추출 (중복 제거를 위해 Set 활용)
-  const textChars = Array.from(new Set(('마이링크' + username).split(''))).join('');
+  const fontText = "마이링크" + displayName + bio + username;
+  const textChars = Array.from(new Set(fontText.split(''))).join('');
   const fontData = await loadGoogleFont('Noto+Sans+KR', textChars);
 
   return new ImageResponse(
@@ -44,17 +76,18 @@ export default async function Image({ params }: { params: { username: string } }
           color: 'white',
         }}
       >
+        {/* 상단 로고 */}
         <div
           style={{
             position: 'absolute',
-            top: 40,
-            left: 40,
+            top: 50,
+            left: 50,
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
             fontSize: '32px',
             fontWeight: 700,
-            color: '#a1a1aa',
+            color: '#e4e4e7',
           }}
         >
           <svg
@@ -64,7 +97,7 @@ export default async function Image({ params }: { params: { username: string } }
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
@@ -74,32 +107,36 @@ export default async function Image({ params }: { params: { username: string } }
           마이링크
         </div>
 
+        {/* 프로필 콘텐츠 */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '30px',
+            gap: '24px',
+            textAlign: 'center',
+            padding: '0 40px',
           }}
         >
+          {/* 프로필 이미지 아이콘 (기본 👤) */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '160px',
-              height: '160px',
+              width: '140px',
+              height: '140px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #3f3f46, #27272a)',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-              border: '4px solid #52525b',
+              background: 'linear-gradient(135deg, #27272a, #09090b)',
+              border: '4px solid #3f3f46',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.4)',
             }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="80"
-              height="80"
+              width="70"
+              height="70"
               viewBox="0 0 24 24"
               fill="none"
               stroke="#a1a1aa"
@@ -111,18 +148,55 @@ export default async function Image({ params }: { params: { username: string } }
               <circle cx="12" cy="7" r="4" />
             </svg>
           </div>
-          
+
+          {/* 텍스트 영역 */}
           <div
             style={{
-              fontSize: '80px',
-              fontWeight: 700,
-              color: '#f4f4f5',
-              letterSpacing: '-0.02em',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
+              gap: '8px',
             }}
           >
-            @{username}
+            {/* 디스플레이 네임 */}
+            <div
+              style={{
+                fontSize: '64px',
+                fontWeight: 700,
+                color: '#ffffff',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              {displayName}
+            </div>
+
+            {/* 사용자 아이디 */}
+            <div
+              style={{
+                fontSize: '32px',
+                fontWeight: 500,
+                color: '#a1a1aa',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              @{username}
+            </div>
+
+            {/* 소개글 */}
+            {bio && (
+              <div
+                style={{
+                  fontSize: '36px',
+                  color: '#71717a',
+                  marginTop: '12px',
+                  maxWidth: '700px',
+                  whiteSpace: 'pre-wrap',
+                  lineHeight: '1.4',
+                }}
+              >
+                {bio}
+              </div>
+            )}
           </div>
         </div>
       </div>
